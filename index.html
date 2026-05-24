@@ -1,0 +1,1050 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Гридин Семён | Java Developer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,600;0,700;1,400&family=Unbounded:wght@300;400;700;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #07070d;
+  --surface: #0e0e18;
+  --card: #12121e;
+  --card2: #181828;
+  --border: #22223a;
+  --border2: #2e2e50;
+  --accent: #7c6aff;
+  --accent-dim: rgba(124,106,255,0.15);
+  --accent2: #3ef0b0;
+  --accent2-dim: rgba(62,240,176,0.12);
+  --accent3: #ff6b6b;
+  --text: #e4e4f0;
+  --muted: #7a7a95;
+  --dim: #44445a;
+  --font-display: 'Unbounded', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 14px;
+  line-height: 1.7;
+  overflow-x: hidden;
+  cursor: none;
+}
+
+/* CURSOR */
+#cursor {
+  position: fixed; pointer-events: none; z-index: 9999;
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: var(--accent);
+  transform: translate(-50%, -50%);
+  transition: transform 0.1s, width 0.2s, height 0.2s, opacity 0.2s;
+  mix-blend-mode: screen;
+}
+#cursor-ring {
+  position: fixed; pointer-events: none; z-index: 9998;
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  border: 1px solid rgba(124,106,255,0.5);
+  transform: translate(-50%, -50%);
+  transition: transform 0.18s ease, width 0.25s, height 0.25s, border-color 0.2s;
+}
+body:has(a:hover) #cursor, body:has(button:hover) #cursor { width: 18px; height: 18px; }
+body:has(a:hover) #cursor-ring, body:has(button:hover) #cursor-ring {
+  width: 56px; height: 56px; border-color: rgba(62,240,176,0.6);
+}
+
+/* GRID */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background-image:
+    linear-gradient(rgba(124,106,255,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(124,106,255,0.025) 1px, transparent 1px);
+  background-size: 48px 48px;
+  pointer-events: none; z-index: 0;
+}
+
+/* AMBIENT CANVAS */
+#ambient { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+
+/* LANG TOGGLE */
+#lang-toggle {
+  position: fixed; top: 1.5rem; right: 1.5rem; z-index: 200;
+  background: var(--card);
+  border: 1px solid var(--border2);
+  border-radius: 8px;
+  display: flex; overflow: hidden;
+  backdrop-filter: blur(12px);
+}
+#lang-toggle button {
+  padding: 7px 16px;
+  background: none; border: none; cursor: none;
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 11px; letter-spacing: 0.1em;
+  transition: all 0.2s;
+}
+#lang-toggle button.active { background: var(--accent); color: #fff; }
+
+/* NAV DOTS */
+#nav-dots {
+  position: fixed; right: 1.5rem; top: 50%; transform: translateY(-50%);
+  z-index: 200; display: flex; flex-direction: column; gap: 10px;
+}
+.nav-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--border2); cursor: none;
+  transition: all 0.25s; border: none;
+  position: relative;
+}
+.nav-dot::after {
+  content: attr(data-label);
+  position: absolute; right: 16px; top: 50%; transform: translateY(-50%);
+  font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.1em;
+  color: var(--accent); white-space: nowrap;
+  opacity: 0; transition: opacity 0.2s;
+  pointer-events: none;
+}
+.nav-dot:hover::after, .nav-dot.active::after { opacity: 1; }
+.nav-dot:hover, .nav-dot.active { background: var(--accent); transform: scale(1.6); }
+
+/* HERO */
+.hero {
+  position: relative; z-index: 1;
+  min-height: 100vh;
+  display: flex; flex-direction: column; justify-content: center;
+  padding: 6rem 3rem 4rem;
+  max-width: 960px; margin: 0 auto;
+}
+.hero-eyebrow {
+  font-size: 10px; letter-spacing: 0.3em; text-transform: uppercase;
+  color: var(--accent2); margin-bottom: 1.5rem;
+  display: flex; align-items: center; gap: 0.8rem;
+}
+.hero-eyebrow::before {
+  content: ''; display: block;
+  width: 28px; height: 1px; background: var(--accent2);
+}
+.hero-name {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: clamp(3rem, 9vw, 6.5rem);
+  line-height: 0.95; letter-spacing: -0.03em;
+  margin-bottom: 1.2rem;
+}
+.hero-name .line1 { display: block; color: var(--accent); }
+.hero-name .line2 { display: block; color: var(--text); }
+.hero-role {
+  font-family: var(--font-display); font-weight: 300;
+  font-size: clamp(0.85rem, 2.5vw, 1.3rem);
+  color: var(--muted); margin-bottom: 2.5rem;
+  letter-spacing: 0.02em;
+}
+.hero-role .sep { color: var(--border2); margin: 0 0.5rem; }
+.hero-desc {
+  max-width: 520px; color: var(--muted); font-size: 13px; line-height: 1.9;
+  margin-bottom: 3rem; padding-left: 1.4rem;
+  border-left: 2px solid var(--accent);
+  position: relative;
+}
+.hero-links { display: flex; gap: 0.8rem; flex-wrap: wrap; }
+.btn {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  padding: 10px 22px; border-radius: 6px;
+  font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.08em;
+  text-decoration: none; transition: all 0.2s; cursor: none; border: 1px solid transparent;
+}
+.btn-primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+.btn-primary:hover { background: #9580ff; border-color: #9580ff; box-shadow: 0 0 24px rgba(124,106,255,0.4); }
+.btn-outline { background: transparent; color: var(--text); border-color: var(--border2); }
+.btn-outline:hover { border-color: var(--accent); color: var(--accent); box-shadow: 0 0 16px rgba(124,106,255,0.15); }
+
+/* SCROLL INDICATOR */
+.scroll-hint {
+  position: absolute; bottom: 3rem; left: 3rem;
+  font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--dim); display: flex; align-items: center; gap: 0.6rem;
+}
+.scroll-hint::after {
+  content: ''; display: block; width: 1px; height: 40px;
+  background: linear-gradient(to bottom, var(--dim), transparent);
+}
+
+/* SECTION */
+section {
+  position: relative; z-index: 1;
+  max-width: 960px; margin: 0 auto; padding: 6rem 3rem;
+  border-top: 1px solid var(--border);
+}
+.section-title {
+  font-family: var(--font-display); font-weight: 700;
+  font-size: clamp(1.4rem, 3.5vw, 2rem);
+  margin-bottom: 3rem; letter-spacing: -0.02em;
+}
+.section-title .num {
+  font-size: 11px; color: var(--accent2); letter-spacing: 0.1em;
+  display: block; margin-bottom: 0.4rem; font-weight: 400;
+}
+
+/* EXPERIENCE TIMELINE */
+.timeline { position: relative; padding-left: 1.5rem; }
+.timeline::before {
+  content: ''; position: absolute; left: 0; top: 8px; bottom: 0;
+  width: 1px; background: linear-gradient(to bottom, var(--accent), transparent);
+}
+.tl-item { position: relative; margin-bottom: 3.5rem; padding-left: 2rem; }
+.tl-dot {
+  position: absolute; left: -1.9rem; top: 6px;
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--accent); border: 2px solid var(--bg);
+  box-shadow: 0 0 12px rgba(124,106,255,0.6);
+}
+.tl-date { font-size: 11px; color: var(--dim); letter-spacing: 0.05em; margin-bottom: 0.5rem; }
+.tl-role {
+  font-family: var(--font-display); font-weight: 700; font-size: 0.95rem;
+  margin-bottom: 0.25rem; color: var(--text);
+}
+.tl-company { color: var(--accent); font-size: 12px; margin-bottom: 0.8rem; letter-spacing: 0.05em; }
+.tl-desc { color: var(--muted); font-size: 13px; line-height: 1.8; }
+.tl-case {
+  margin-top: 1rem; padding: 0.9rem 1.1rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 2px solid var(--accent2);
+  border-radius: 0 6px 6px 0;
+  font-size: 12px; color: var(--text);
+}
+.tl-case-label {
+  font-size: 9px; text-transform: uppercase; letter-spacing: 0.15em;
+  color: var(--accent2); margin-bottom: 0.35rem;
+}
+
+/* SKILLS - interactive tabs */
+.skills-hint {
+  font-size: 10px; color: var(--dim); letter-spacing: 0.15em; text-transform: uppercase;
+  margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;
+  animation: hint-pulse 2s ease-in-out infinite;
+}
+.skills-hint::before {
+  content: ''; display: inline-block;
+  width: 16px; height: 1px; background: var(--dim);
+}
+@keyframes hint-pulse { 0%,100%{opacity:0.4} 50%{opacity:1} }
+
+.skill-tabs {
+  display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 2rem;
+  position: relative;
+}
+.skill-tab {
+  padding: 8px 16px; border-radius: 6px; cursor: none;
+  font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.08em;
+  border: 1px solid var(--border2); background: var(--surface); color: var(--muted);
+  transition: all 0.22s; position: relative; overflow: hidden;
+  display: flex; align-items: center; gap: 6px;
+  user-select: none;
+}
+.skill-tab .tab-count {
+  font-size: 9px; background: var(--border); color: var(--dim);
+  padding: 1px 5px; border-radius: 3px; transition: all 0.2s;
+}
+.skill-tab::after {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(circle at center, rgba(124,106,255,0.18), transparent 70%);
+  opacity: 0; transition: opacity 0.3s;
+}
+.skill-tab:hover { border-color: var(--accent); color: var(--text); transform: translateY(-1px); }
+.skill-tab:hover::after { opacity: 1; }
+.skill-tab:hover .tab-count { background: var(--accent-dim); color: var(--accent); }
+.skill-tab.active {
+  background: var(--accent-dim); border-color: var(--accent); color: var(--accent);
+  box-shadow: 0 0 18px rgba(124,106,255,0.2), inset 0 0 12px rgba(124,106,255,0.05);
+}
+.skill-tab.active .tab-count { background: var(--accent); color: #fff; }
+.skill-tab.active::after { opacity: 0; }
+
+/* RIPPLE */
+.ripple {
+  position: absolute; border-radius: 50%;
+  background: rgba(124,106,255,0.25);
+  transform: scale(0); animation: ripple-anim 0.5s ease-out forwards;
+  pointer-events: none;
+}
+@keyframes ripple-anim { to { transform: scale(4); opacity: 0; } }
+
+.skill-panels { position: relative; min-height: 80px; }
+.skill-panels > div {
+  display: none; flex-wrap: wrap; gap: 8px;
+  animation: panel-in 0.3s ease;
+}
+.skill-panels > div.active { display: flex; }
+@keyframes panel-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+.tag {
+  padding: 6px 13px; background: var(--card2);
+  border: 1px solid var(--border); border-radius: 5px;
+  font-size: 12px; color: var(--text); font-family: var(--font-mono);
+  transition: all 0.2s; cursor: default;
+  position: relative; overflow: hidden;
+}
+.tag::before {
+  content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+  width: 2px; background: var(--accent2); opacity: 0; transition: opacity 0.2s;
+}
+.tag:hover { border-color: var(--accent2); color: var(--accent2); transform: translateY(-1px); }
+.tag:hover::before { opacity: 1; }
+.tag.hot { border-color: rgba(124,106,255,0.5); color: var(--accent); }
+.tag.hot::before { background: var(--accent); opacity: 1; }
+
+/* PROJECTS */
+.projects-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1.2rem;
+}
+.project-card {
+  background: var(--card);
+  border: 1px solid var(--border); border-radius: 10px;
+  padding: 1.5rem; text-decoration: none; color: inherit;
+  transition: all 0.25s; display: flex; flex-direction: column; gap: 0.8rem;
+  position: relative; overflow: hidden; cursor: none;
+}
+.project-card::before {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(135deg, var(--accent-dim), transparent);
+  opacity: 0; transition: opacity 0.3s;
+}
+.project-card:hover { border-color: var(--accent); transform: translateY(-3px); box-shadow: 0 12px 40px rgba(124,106,255,0.12); }
+.project-card:hover::before { opacity: 1; }
+.project-header { display: flex; align-items: center; gap: 8px; }
+.project-lang-dot {
+  width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0;
+  background: var(--accent);
+}
+.project-lang-dot.cpp { background: #f34b7d; }
+.project-lang-dot.c { background: #a0a0b8; }
+.project-name {
+  font-family: var(--font-display); font-weight: 700; font-size: 0.9rem;
+  position: relative; z-index: 1;
+}
+.project-desc { color: var(--muted); font-size: 12px; line-height: 1.7; flex: 1; position: relative; z-index: 1; }
+.project-footer {
+  font-size: 10px; color: var(--dim); letter-spacing: 0.08em;
+  position: relative; z-index: 1; display: flex; align-items: center; gap: 6px;
+}
+.project-footer::before { content: '→'; color: var(--accent); font-size: 12px; }
+
+/* STRENGTHS */
+.sw-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+@media (max-width: 640px) { .sw-grid { grid-template-columns: 1fr; } }
+.sw-card {
+  background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 1.5rem;
+}
+.sw-card.strengths { border-top: 2px solid var(--accent2); }
+.sw-card.weaknesses { border-top: 2px solid var(--accent3); }
+.sw-card-title {
+  font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 1.2rem;
+}
+.sw-card.strengths .sw-card-title { color: var(--accent2); }
+.sw-card.weaknesses .sw-card-title { color: var(--accent3); }
+.sw-item {
+  display: flex; gap: 0.6rem; margin-bottom: 0.9rem;
+  font-size: 13px; color: var(--muted); line-height: 1.6;
+}
+.sw-item .bullet { flex-shrink: 0; color: var(--accent2); margin-top: 2px; }
+.sw-card.weaknesses .sw-item .bullet { color: var(--accent3); }
+
+/* CONTACT */
+.contact-grid { display: flex; flex-wrap: wrap; gap: 0.8rem; }
+.contact-item {
+  display: flex; align-items: center; gap: 0.8rem;
+  padding: 13px 20px;
+  background: var(--card); border: 1px solid var(--border); border-radius: 8px;
+  text-decoration: none; color: var(--text); font-size: 13px;
+  transition: all 0.2s; cursor: none;
+}
+.contact-item:hover { border-color: var(--accent); color: var(--accent); box-shadow: 0 0 20px rgba(124,106,255,0.1); }
+.contact-icon { color: var(--accent); font-size: 15px; opacity: 0.8; }
+
+/* EDUCATION */
+.edu-item { display: grid; grid-template-columns: 140px 1fr; gap: 2rem; margin-bottom: 2.5rem; }
+@media (max-width: 600px) { .edu-item { grid-template-columns: 1fr; gap: 0.4rem; } }
+.edu-date { color: var(--dim); font-size: 11px; padding-top: 4px; }
+.edu-role { font-family: var(--font-display); font-weight: 700; font-size: 0.9rem; margin-bottom: 0.2rem; }
+.edu-org { color: var(--accent); font-size: 12px; margin-bottom: 0.7rem; }
+.edu-desc { color: var(--muted); font-size: 13px; line-height: 1.8; }
+
+/* FOOTER */
+footer {
+  position: relative; z-index: 1; text-align: center;
+  padding: 3rem; border-top: 1px solid var(--border);
+  color: var(--dim); font-size: 11px; letter-spacing: 0.08em;
+}
+
+/* REVEAL */
+.reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.7s ease, transform 0.7s ease; }
+.reveal.visible { opacity: 1; transform: none; }
+
+/* SCROLL PROGRESS */
+#progress {
+  position: fixed; top: 0; left: 0; height: 2px; z-index: 300;
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+  width: 0%; transition: width 0.08s linear;
+  box-shadow: 0 0 10px rgba(124,106,255,0.7);
+  pointer-events: none;
+}
+
+/* SECTION NUM glow */
+.section-title .num {
+  font-size: 11px; color: var(--accent2); letter-spacing: 0.1em;
+  display: block; margin-bottom: 0.4rem; font-weight: 400;
+  text-shadow: 0 0 14px rgba(62,240,176,0.6);
+}
+
+/* GLITCH on hero name */
+.hero-name .line1 { display: block; color: var(--accent); }
+.hero-name .line2 { display: block; }
+.hero-name:hover .line1 { animation: glitch-clip 0.5s steps(2) 1; }
+@keyframes glitch-clip {
+  0%  { text-shadow: 2px 0 #ff6b6b, -2px 0 #3ef0b0; }
+  25% { text-shadow: -2px 0 #ff6b6b, 2px 0 #3ef0b0; clip-path: inset(30% 0 50% 0); }
+  50% { text-shadow: 2px 0 #3ef0b0, -2px 0 #ff6b6b; clip-path: inset(60% 0 10% 0); }
+  75% { text-shadow: 0 0 transparent; clip-path: inset(0); }
+  100%{ text-shadow: 0 0 transparent; clip-path: inset(0); }
+}
+
+/* TYPING blink on eyebrow */
+.hero-eyebrow::after { content: '_'; animation: blink 1s step-end infinite; color: var(--accent2); }
+@keyframes blink { 50%{opacity:0} }
+
+/* CONTACT icon mono badge */
+.contact-icon {
+  font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.04em;
+  color: var(--accent2); min-width: 22px; text-align: center;
+  border: 1px solid rgba(62,240,176,0.3); border-radius: 3px;
+  padding: 1px 4px;
+}
+
+/* TIMELINE hover dim */
+.timeline:hover .tl-item { opacity: 0.45; transition: opacity 0.2s; }
+.timeline:hover .tl-item:hover { opacity: 1; }
+.tl-item { transition: opacity 0.2s; }
+
+/* FOOTER terminal prefix */
+footer .term { color: var(--accent2); margin-right: 0.3rem; }
+
+/* RIPPLE */
+.ripple {
+  position: absolute; border-radius: 50%; pointer-events: none;
+  background: rgba(124,106,255,0.3);
+  transform: scale(0); animation: ripple-out 0.55s ease-out forwards;
+}
+@keyframes ripple-out { to { transform: scale(5); opacity: 0; } }
+
+/* LANG */
+.inline-en { display: none; }
+body.en .inline-ru { display: none; }
+body.en .inline-en { display: inline; }
+.block-en { display: none; }
+body.en .block-ru { display: none; }
+body.en .block-en { display: block; }
+
+@media (max-width: 640px) {
+  .hero { padding: 5rem 1.5rem 3rem; }
+  section { padding: 4rem 1.5rem; }
+  #nav-dots { display: none; }
+  .scroll-hint { display: none; }
+  body { cursor: auto; }
+  #cursor, #cursor-ring { display: none; }
+}
+</style>
+</head>
+<body>
+
+<div id="progress"></div>
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+<canvas id="ambient"></canvas>
+
+<div id="lang-toggle">
+  <button onclick="setLang('ru')" class="active" id="btn-ru">RU</button>
+  <button onclick="setLang('en')" id="btn-en">EN</button>
+</div>
+
+<nav id="nav-dots">
+  <button class="nav-dot active" onclick="scrollTo('#hero')" data-label="home"></button>
+  <button class="nav-dot" onclick="scrollTo('#exp')" data-label="опыт"></button>
+  <button class="nav-dot" onclick="scrollTo('#skills')" data-label="стек"></button>
+  <button class="nav-dot" onclick="scrollTo('#projects')" data-label="проекты"></button>
+  <button class="nav-dot" onclick="scrollTo('#about')" data-label="о себе"></button>
+  <button class="nav-dot" onclick="scrollTo('#edu')" data-label="образование"></button>
+  <button class="nav-dot" onclick="scrollTo('#contact')" data-label="контакт"></button>
+</nav>
+
+<!-- HERO -->
+<div class="hero reveal" id="hero">
+  <div class="hero-eyebrow">
+    <span class="inline-ru">backend · embedded · pm</span>
+    <span class="inline-en">backend · embedded · pm</span>
+  </div>
+  <h1 class="hero-name" id="hero-name">
+    <span class="line1" id="name-line1">Гридин</span>
+    <span class="line2" id="name-line2">Семён</span>
+  </h1>
+  <p class="hero-role">
+    <span class="inline-ru">Java Developer<span class="sep">/</span>Embedded Developer<span class="sep">/</span>Project Manager</span>
+    <span class="inline-en">Java Developer<span class="sep">/</span>Embedded Developer<span class="sep">/</span>Project Manager</span>
+  </p>
+  <p class="hero-desc">
+    <span class="inline-ru">
+      В 2026 году окончил МИЭТ по специальности Интегральная Электроника.
+      До Java писал на ассемблере, поэтому примерно понимаю что там происходит внутри.
+      Работал в Ангстреме: верифицировал 32-битные микроконтроллеры и параллельно вёл проекты.
+    </span>
+    <span class="inline-en">
+      Graduated from MIET in 2026, Integrated Electronics.
+      Before Java I wrote assembly, so I have a decent idea of what happens inside.
+      Worked at Angstrem: verified 32-bit microcontrollers and also managed projects.
+    </span>
+  </p>
+  <div class="hero-links">
+    <a href="https://github.com/twoonemoon" class="btn btn-primary" target="_blank">GitHub</a>
+    <a href="https://t.me/twoonemoon" class="btn btn-outline" target="_blank">Telegram</a>
+    <a href="https://mail.google.com/mail/?view=cm&to=gridinsams@gmail.com" class="btn btn-outline" target="_blank">
+      <span class="inline-ru">Написать</span>
+      <span class="inline-en">Email me</span>
+    </a>
+  </div>
+  <div class="scroll-hint">
+    <span class="inline-ru">скролл</span>
+    <span class="inline-en">scroll</span>
+  </div>
+</div>
+
+<!-- EXPERIENCE -->
+<section class="reveal" id="exp">
+  <h2 class="section-title">
+    <span class="num">01</span>
+    <span class="inline-ru">Опыт работы</span>
+    <span class="inline-en">Experience</span>
+  </h2>
+  <div class="timeline">
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-date">
+        <span class="inline-ru">Ноябрь 2024 — наст. время</span>
+        <span class="inline-en">Nov 2024 — present</span>
+      </div>
+      <div class="tl-role">
+        <span class="inline-ru">Инженер-программист II разряда · Embedded Developer · RTL-верификатор</span>
+        <span class="inline-en">Software Engineer II · Embedded Developer · RTL Verification</span>
+      </div>
+      <div class="tl-company">АО «Ангстрем», Москва</div>
+      <div class="tl-desc">
+        <span class="inline-ru">
+          Писал прошивки для микроконтроллеров, верифицировал их.
+          Участвовал в верификации 32-битного МК: смотрел RTL-модели,
+          находил где спецификация расходится с реализацией.
+          Работал с коллегами из смежных организаций.
+        </span>
+        <span class="inline-en">
+          Wrote firmware for microcontrollers, worked on their verification.
+          Participated in 32-bit MCU verification: read RTL models,
+          found where spec diverged from implementation.
+          Worked with engineers from partner companies.
+        </span>
+      </div>
+      <div class="tl-case">
+        <div class="tl-case-label"><span class="inline-ru">кейс</span><span class="inline-en">case</span></div>
+        <span class="inline-ru">
+          Писал bootloader. Взял чужую Verilog-модель, нашёл в ней баги, починил. Проект сдали в срок.
+        </span>
+        <span class="inline-en">
+          Was writing a bootloader. Took a third-party Verilog model, found bugs in it, fixed them. Project shipped on time.
+        </span>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot" style="background:var(--accent2);box-shadow:0 0 12px rgba(62,240,176,0.5)"></div>
+      <div class="tl-date">
+        <span class="inline-ru">По совместительству</span>
+        <span class="inline-en">Concurrent role</span>
+      </div>
+      <div class="tl-role">
+        <span class="inline-ru">Проджект-менеджер</span>
+        <span class="inline-en">Project Manager</span>
+      </div>
+      <div class="tl-company">АО «Ангстрем», Москва</div>
+      <div class="tl-desc">
+        <span class="inline-ru">
+          Параллельно вёл проектное направление: планирование, координация команды, SCRUM, Jira.
+          Так как сам писал код, было проще разговаривать с разработчиками и нормально оценивать сроки.
+        </span>
+        <span class="inline-en">
+          Also handled project management: planning, team coordination, SCRUM, Jira.
+          Since I wrote code myself, talking to devs was easier and timeline estimates were more realistic.
+        </span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section class="reveal" id="skills">
+  <h2 class="section-title">
+    <span class="num">02</span>
+    <span class="inline-ru">Стек и инструменты</span>
+    <span class="inline-en">Stack & tools</span>
+  </h2>
+  <div class="skills-hint">
+    <span class="inline-ru">выбери раздел</span>
+    <span class="inline-en">pick a category</span>
+  </div>
+  <div class="skill-tabs">
+    <button class="skill-tab active" onclick="switchTab(this,'tab-java')">
+      Java Backend <span class="tab-count">11</span>
+    </button>
+    <button class="skill-tab" onclick="switchTab(this,'tab-db')">
+      <span class="inline-ru">Базы данных</span><span class="inline-en">Databases</span>
+      <span class="tab-count">4</span>
+    </button>
+    <button class="skill-tab" onclick="switchTab(this,'tab-embedded')">
+      Embedded / RTL <span class="tab-count">8</span>
+    </button>
+    <button class="skill-tab" onclick="switchTab(this,'tab-mgmt')">
+      <span class="inline-ru">Менеджмент</span><span class="inline-en">Management</span>
+      <span class="tab-count">3</span>
+    </button>
+  </div>
+  <div class="skill-panels">
+    <div id="tab-java" class="active">
+      <span class="tag hot">Java 17/21</span>
+      <span class="tag hot">Spring Boot</span>
+      <span class="tag">Spring MVC</span>
+      <span class="tag">Spring Security</span>
+      <span class="tag">Hibernate</span>
+      <span class="tag">JPA</span>
+      <span class="tag">REST API</span>
+      <span class="tag">Multithreading</span>
+      <span class="tag">Kafka</span>
+      <span class="tag">JUnit</span>
+      <span class="tag">Maven</span>
+    </div>
+    <div id="tab-db">
+      <span class="tag hot">PostgreSQL</span>
+      <span class="tag">Oracle</span>
+      <span class="tag">PGAdmin 4</span>
+      <span class="tag">DBeaver</span>
+    </div>
+    <div id="tab-embedded">
+      <span class="tag hot">C/C++</span>
+      <span class="tag hot">Assembler x86/RISC-V</span>
+      <span class="tag">RTL-разработка</span>
+      <span class="tag">Verilog</span>
+      <span class="tag">Cadence SimVision</span>
+      <span class="tag">Cadence Virtuoso</span>
+      <span class="tag">Python</span>
+      <span class="tag">Matlab</span>
+    </div>
+    <div id="tab-mgmt">
+      <span class="tag hot">SCRUM</span>
+      <span class="tag hot">Jira</span>
+      <span class="tag">Git</span>
+    </div>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section class="reveal" id="projects">
+  <h2 class="section-title">
+    <span class="num">03</span>
+    <span class="inline-ru">Pet-проекты</span>
+    <span class="inline-en">Pet projects</span>
+  </h2>
+  <div class="projects-grid">
+    <a href="https://github.com/twoonemoon/SpringBoot-antifraud" class="project-card" target="_blank">
+      <div class="project-header"><span class="project-lang-dot"></span>
+        <div class="project-name">SpringBoot-antifraud</div>
+      </div>
+      <div class="project-desc">
+        <span class="inline-ru">REST API-сервис для анализа транзакций и выявления мошеннических операций. Spring MVC, Spring Security, Hibernate.</span>
+        <span class="inline-en">REST API service for transaction analysis and fraud detection. Spring MVC, Spring Security, Hibernate.</span>
+      </div>
+      <div class="project-footer">Java · Spring Boot</div>
+    </a>
+    <a href="https://github.com/twoonemoon/SpringBoot-movie-recommender" class="project-card" target="_blank">
+      <div class="project-header"><span class="project-lang-dot"></span>
+        <div class="project-name">SpringBoot-movie-recommender</div>
+      </div>
+      <div class="project-desc">
+        <span class="inline-ru">Сервис рекомендаций фильмов на Spring Boot. Хранение, фильтрация, выдача рекомендаций.</span>
+        <span class="inline-en">Movie recommendation service on Spring Boot. Storage, filtering, recommendation delivery.</span>
+      </div>
+      <div class="project-footer">Java · Spring Boot</div>
+    </a>
+    <a href="https://github.com/twoonemoon/PinkGuitarFX" class="project-card" target="_blank">
+      <div class="project-header"><span class="project-lang-dot cpp"></span>
+        <div class="project-name">PinkGuitarFX</div>
+      </div>
+      <div class="project-desc">
+        <span class="inline-ru">VST3/AU плагин для гитарного дисторшна на JUCE. Овердрайв, гейт шума, стерео, IR-кабинеты, хроматический тюнер. В розовом корпусе.</span>
+        <span class="inline-en">Guitar distortion VST3/AU plugin built with JUCE. Overdrive, noise gate, stereo widener, cab IR loader, chromatic tuner. Pink package.</span>
+      </div>
+      <div class="project-footer">C++ · JUCE</div>
+    </a>
+    <a href="https://github.com/twoonemoon/binpeek" class="project-card" target="_blank">
+      <div class="project-header"><span class="project-lang-dot c"></span>
+        <div class="project-name">binpeek</div>
+      </div>
+      <div class="project-desc">
+        <span class="inline-ru">Утилита для дизассемблирования бинарных файлов под кастомную 32-битную архитектуру. Читает по 4 байта, декодирует опкод, выдаёт аннотированный текст.</span>
+        <span class="inline-en">Disassembler for binaries targeting a custom 32-bit architecture. Reads 4 bytes at a time, decodes opcode, outputs annotated text.</span>
+      </div>
+      <div class="project-footer">C · Low-level tooling</div>
+    </a>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section class="reveal" id="about">
+  <h2 class="section-title">
+    <span class="num">04</span>
+    <span class="inline-ru">Сильные и слабые стороны</span>
+    <span class="inline-en">Strengths & weaknesses</span>
+  </h2>
+  <div class="sw-grid">
+    <div class="sw-card strengths">
+      <div class="sw-card-title"><span class="inline-ru">Что есть</span><span class="inline-en">Strengths</span></div>
+      <div class="sw-item">
+        <span class="bullet">+</span>
+        <span>
+          <span class="inline-ru">До Java был ассемблер и C. Помогает когда надо понять что происходит ниже уровня языка.</span>
+          <span class="inline-en">Before Java there was assembly and C. Helps when you need to understand what happens below language level.</span>
+        </span>
+      </div>
+      <div class="sw-item">
+        <span class="bullet">+</span>
+        <span>
+          <span class="inline-ru">Нахожу баги в RTL-моделях и чужом коде. Верификация хорошо тренирует терпение и внимательность.</span>
+          <span class="inline-en">Find bugs in RTL models and other people's code. Verification is good training for patience and attention.</span>
+        </span>
+      </div>
+      <div class="sw-item">
+        <span class="bullet">+</span>
+        <span>
+          <span class="inline-ru">Поработал инженером и менеджером на одном проекте. Умею разговаривать с обеими сторонами.</span>
+          <span class="inline-en">Was both engineer and PM on the same project. Can talk to both sides.</span>
+        </span>
+      </div>
+      <div class="sw-item">
+        <span class="bullet">+</span>
+        <span>
+          <span class="inline-ru">Успеваю работать и учиться одновременно: задачи на работе и новые знания в свободное время нормально совмещаются.</span>
+          <span class="inline-en">Can work and study at the same time: job tasks and learning new things outside work fit together fine.</span>
+        </span>
+      </div>
+      <div class="sw-item">
+        <span class="bullet">+</span>
+        <span>
+          <span class="inline-ru">Английский Advanced. Читаю документацию в оригинале, Stack Overflow без переводчика.</span>
+          <span class="inline-en">Advanced English. Read docs in the original, use Stack Overflow without a translator.</span>
+        </span>
+      </div>
+    </div>
+    <div class="sw-card weaknesses">
+      <div class="sw-card-title"><span class="inline-ru">Чего нет</span><span class="inline-en">Weaknesses</span></div>
+      <div class="sw-item">
+        <span class="bullet">-</span>
+        <span>
+          <span class="inline-ru">Коммерческого Java-опыта нет. Есть pet-проекты написанные самостоятельно, но это не продакшн.</span>
+          <span class="inline-en">No commercial Java experience. Got pet projects I wrote myself, but that's not production.</span>
+        </span>
+      </div>
+      <div class="sw-item">
+        <span class="bullet">-</span>
+        <span>
+          <span class="inline-ru">Docker знаю теоретически, контейнеры запускал. С Kubernetes не работал вообще.</span>
+          <span class="inline-en">Know Docker mostly in theory, ran containers. Never touched Kubernetes at all.</span>
+        </span>
+      </div>
+      <div class="sw-item">
+        <span class="bullet">-</span>
+        <span>
+          <span class="inline-ru">На GitHub пока мало проектов. Работаю над этим.</span>
+          <span class="inline-en">Not many projects on GitHub yet. Working on it.</span>
+        </span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EDUCATION -->
+<section class="reveal" id="edu">
+  <h2 class="section-title">
+    <span class="num">05</span>
+    <span class="inline-ru">Образование</span>
+    <span class="inline-en">Education</span>
+  </h2>
+  <div class="edu-item">
+    <div class="edu-date">2022 — 2026</div>
+    <div>
+      <div class="edu-role">
+        <span class="inline-ru">Интегральная Электроника · Бакалавриат</span>
+        <span class="inline-en">Integrated Electronics · Bachelor's degree</span>
+      </div>
+      <div class="edu-org">НИУ «МИЭТ», Зеленоград</div>
+      <div class="edu-desc">
+        <span class="inline-ru">Учили проектировать микросхемы. По пути выучил ассемблер, C/C++, поработал с микроконтроллерами, изучал высшую математику и физику. Получился нормальный инженерный бэкграунд.</span>
+        <span class="inline-en">Studied IC design. Along the way learned assembly, C/C++, worked with microcontrollers, studied higher math and physics. Ended up with a decent engineering background.</span>
+      </div>
+    </div>
+  </div>
+  <div class="edu-item">
+    <div class="edu-date">2024</div>
+    <div>
+      <div class="edu-role">Java: полный курс · Андрей Сумин</div>
+      <div class="edu-org">Online</div>
+      <div class="edu-desc">
+        <span class="inline-ru">Прошёл курс чтобы разобраться в JVM, многопоточности, Collections, Stream API, JUnit. Хотел понять как это работает внутри, не просто посмотреть синтаксис.</span>
+        <span class="inline-en">Took the course to understand JVM, multithreading, Collections, Stream API, JUnit. Wanted to understand how it works inside, not just learn syntax.</span>
+      </div>
+    </div>
+  </div>
+  <div class="edu-item">
+    <div class="edu-date">2025</div>
+    <div>
+      <div class="edu-role">Spring для начинающих · Заур Трегулов</div>
+      <div class="edu-org">Online</div>
+      <div class="edu-desc">
+        <span class="inline-ru">Spring Boot, MVC, Security, IoC/DI, Hibernate. Сразу после курса написал антифрод-сервис и рекомендательный движок. Оба в открытом доступе на GitHub.</span>
+        <span class="inline-en">Spring Boot, MVC, Security, IoC/DI, Hibernate. Right after the course wrote an antifraud service and a recommendation engine. Both are on GitHub.</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="reveal" id="contact">
+  <h2 class="section-title">
+    <span class="num">06</span>
+    <span class="inline-ru">Связаться</span>
+    <span class="inline-en">Get in touch</span>
+  </h2>
+  <div class="contact-grid">
+    <a href="https://t.me/twoonemoon" class="contact-item" target="_blank">
+      <span class="contact-icon">tg</span> @twoonemoon
+    </a>
+    <a href="https://github.com/twoonemoon" class="contact-item" target="_blank">
+      <span class="contact-icon">gh</span> github.com/twoonemoon
+    </a>
+    <a href="https://mail.google.com/mail/?view=cm&to=gridinsams@gmail.com" class="contact-item" target="_blank">
+      <span class="contact-icon">@</span> gridinsams@gmail.com
+    </a>
+    <a href="tel:+79056989657" class="contact-item">
+      <span class="contact-icon">#</span> +7-905-698-96-57
+    </a>
+  </div>
+</section>
+
+<footer>
+  <span class="term">&gt;</span>
+  <span class="inline-ru">Гридин Семён · Java Developer · Embedded Developer · 2026</span>
+  <span class="inline-en">Gridin Sam · Java Developer · Embedded Developer · 2026</span>
+</footer>
+
+<script>
+// LANG
+function setLang(lang) {
+  document.body.classList.toggle('en', lang === 'en');
+  document.getElementById('btn-ru').classList.toggle('active', lang === 'ru');
+  document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+  document.documentElement.lang = lang === 'en' ? 'en' : 'ru';
+  const l1 = document.getElementById('name-line1');
+  const l2 = document.getElementById('name-line2');
+  if (l1 && l2) {
+    l1.textContent = lang === 'en' ? 'Gridin' : 'Гридин';
+    l2.textContent = lang === 'en' ? 'Sam' : 'Семён';
+  }
+}
+
+// SKILL TABS
+function switchTab(btn, id) {
+  document.querySelectorAll('.skill-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.skill-panels > div').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById(id).classList.add('active');
+}
+
+// RIPPLE on buttons/tabs
+document.addEventListener('click', e => {
+  const btn = e.target.closest('.skill-tab, .btn, .contact-item, .nav-dot');
+  if (!btn) return;
+  const r = document.createElement('span');
+  r.className = 'ripple';
+  const rect = btn.getBoundingClientRect();
+  const size = Math.max(rect.width, rect.height);
+  r.style.cssText = `width:${size}px;height:${size}px;left:${e.clientX-rect.left-size/2}px;top:${e.clientY-rect.top-size/2}px;position:absolute;`;
+  btn.appendChild(r);
+  setTimeout(() => r.remove(), 650);
+});
+
+// SCROLL PROGRESS BAR
+const prog = document.getElementById('progress');
+window.addEventListener('scroll', () => {
+  const pct = window.scrollY / (document.body.scrollHeight - window.innerHeight) * 100;
+  if (prog) prog.style.width = Math.min(pct, 100) + '%';
+}, { passive: true });
+
+// NAV DOTS scroll
+function scrollTo(sel) {
+  document.querySelector(sel).scrollIntoView({ behavior: 'smooth' });
+}
+
+// NAV DOTS active state
+const sections = ['hero','exp','skills','projects','about','edu','contact'];
+const dots = document.querySelectorAll('.nav-dot');
+const io = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      const i = sections.indexOf(e.target.id);
+      if (i >= 0) dots.forEach((d,j) => d.classList.toggle('active', j === i));
+    }
+  });
+}, { threshold: 0.4 });
+sections.forEach(id => { const el = document.getElementById(id); if(el) io.observe(el); });
+
+// REVEAL
+const revealObs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.08 });
+document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
+
+// KEYBOARD: 1-7 jump to section
+document.addEventListener('keydown', e => {
+  const n = parseInt(e.key);
+  if (n >= 1 && n <= sections.length) {
+    document.getElementById(sections[n-1])?.scrollIntoView({ behavior: 'smooth' });
+  }
+});
+
+// CUSTOM CURSOR
+const cur = document.getElementById('cursor');
+const ring = document.getElementById('cursor-ring');
+let mx = 0, my = 0, rx = 0, ry = 0;
+document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+(function animCursor() {
+  rx += (mx - rx) * 0.14;
+  ry += (my - ry) * 0.14;
+  if (cur) { cur.style.left = mx+'px'; cur.style.top = my+'px'; }
+  if (ring) { ring.style.left = rx+'px'; ring.style.top = ry+'px'; }
+  requestAnimationFrame(animCursor);
+})();
+
+// AMBIENT CANVAS
+(function() {
+  const canvas = document.getElementById('ambient');
+  const ctx = canvas.getContext('2d');
+  function resize() { canvas.width = innerWidth; canvas.height = innerHeight; }
+  resize(); window.addEventListener('resize', resize);
+
+  const orbs = [
+    { x: 0.12, y: 0.18, r: 0.38, c: '124,106,255', s: 0.00020, a: 0.3,  d: 0.12 },
+    { x: 0.82, y: 0.52, r: 0.32, c: '62,240,176',  s: 0.00015, a: 2.1,  d: 0.10 },
+    { x: 0.45, y: 0.85, r: 0.28, c: '124,106,255', s: 0.00025, a: 4.7,  d: 0.09 },
+    { x: 0.88, y: 0.10, r: 0.24, c: '62,240,176',  s: 0.00018, a: 1.4,  d: 0.13 },
+    { x: 0.50, y: 0.42, r: 0.22, c: '160,100,255', s: 0.00013, a: 3.2,  d: 0.08 },
+  ];
+
+  const N = 110;
+  const pts = Array.from({length: N}, () => ({
+    x: Math.random(), y: Math.random(),
+    sz: Math.random() * 2.0 + 0.4,
+    op: Math.random() * 0.55 + 0.18,
+    vx: (Math.random()-.5) * 0.00014,
+    vy: (Math.random()-.5) * 0.00014,
+    ph: Math.random() * Math.PI * 2,
+    ps: Math.random() * 0.0018 + 0.0007,
+    c: Math.random() > 0.5 ? '62,240,176' : '124,106,255',
+  }));
+
+  const makeStreak = () => ({
+    x: Math.random(), y: Math.random() * 0.7,
+    len: Math.random() * 0.10 + 0.05,
+    spd: Math.random() * 0.0004 + 0.0002,
+    op: Math.random() * 0.45 + 0.15,
+    c: Math.random() > 0.5 ? '124,106,255' : '62,240,176',
+    ang: Math.PI/4 + (Math.random()-.5)*0.5,
+    life: 0, maxLife: Math.random()*2500+1500,
+    delay: Math.random()*4000,
+  });
+  const streaks = Array.from({length:8}, makeStreak);
+
+  // Mouse repel
+  let mx2 = -1, my2 = -1;
+  document.addEventListener('mousemove', e => { mx2 = e.clientX/innerWidth; my2 = e.clientY/innerHeight; });
+
+  let t = 0;
+  function draw(ts) {
+    t = ts;
+    const W = canvas.width, H = canvas.height;
+    ctx.clearRect(0, 0, W, H);
+
+    orbs.forEach(o => {
+      const cx = (o.x + Math.sin(t*o.s + o.a)*o.d) * W;
+      const cy = (o.y + Math.cos(t*o.s*.7 + o.a)*o.d) * H;
+      const r  = o.r * Math.min(W,H);
+      const g  = ctx.createRadialGradient(cx,cy,0,cx,cy,r);
+      g.addColorStop(0,   `rgba(${o.c},0.22)`);
+      g.addColorStop(0.25,`rgba(${o.c},0.12)`);
+      g.addColorStop(0.6, `rgba(${o.c},0.04)`);
+      g.addColorStop(1,   `rgba(${o.c},0)`);
+      ctx.beginPath(); ctx.arc(cx,cy,r,0,Math.PI*2);
+      ctx.fillStyle = g; ctx.fill();
+    });
+
+    streaks.forEach((s,i) => {
+      s.life += 16;
+      if (s.life < s.delay) return;
+      const prog = (s.life - s.delay) / s.maxLife;
+      if (prog > 1) { streaks[i] = makeStreak(); return; }
+      const fade = prog < 0.12 ? prog/0.12 : 1-(prog-0.12)/0.88;
+      const sx = (s.x + Math.cos(s.ang)*s.spd*(s.life-s.delay)) * W;
+      const sy = (s.y + Math.sin(s.ang)*s.spd*(s.life-s.delay)) * H;
+      const ex = sx - Math.cos(s.ang)*s.len*W;
+      const ey = sy - Math.sin(s.ang)*s.len*H;
+      const g = ctx.createLinearGradient(ex,ey,sx,sy);
+      g.addColorStop(0, `rgba(${s.c},0)`);
+      g.addColorStop(1, `rgba(${s.c},${s.op*fade})`);
+      ctx.beginPath(); ctx.moveTo(ex,ey); ctx.lineTo(sx,sy);
+      ctx.strokeStyle = g; ctx.lineWidth = 1.5; ctx.stroke();
+    });
+
+    pts.forEach(p => {
+      p.x += p.vx; p.y += p.vy; p.ph += p.ps;
+      if (p.x<0) p.x=1; if(p.x>1) p.x=0;
+      if (p.y<0) p.y=1; if(p.y>1) p.y=0;
+      // mouse repel
+      if (mx2 >= 0) {
+        const dx = p.x - mx2, dy = p.y - my2;
+        const dist = Math.sqrt(dx*dx+dy*dy);
+        if (dist < 0.08) {
+          p.x += dx/dist * 0.0006;
+          p.y += dy/dist * 0.0006;
+        }
+      }
+      const al = p.op * (0.45 + 0.55 * Math.sin(p.ph));
+      ctx.beginPath(); ctx.arc(p.x*W, p.y*H, p.sz, 0, Math.PI*2);
+      ctx.fillStyle = `rgba(${p.c},${al})`; ctx.fill();
+    });
+
+    requestAnimationFrame(draw);
+  }
+  requestAnimationFrame(draw);
+})();
+</script>
+</body>
+</html>
