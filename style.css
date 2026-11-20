@@ -6,3 +6,14 @@
 @media(max-width:760px){.shell{width:calc(100% - 40px)}header{min-height:84px;gap:15px;flex-wrap:wrap;padding:18px 0}nav{order:3;width:100%;justify-content:space-between;gap:15px}nav a{font-size:14px}.controls{margin-left:auto}.hero{padding-top:32px}.hero h1{font-size:11.2vw;margin:20px 0 30px}.hero-bottom{grid-template-columns:1fr;gap:0;padding-bottom:36px}.intro h2{font-size:38px}.intro p{font-size:17px}.orbital{display:none}.section{padding:38px 0}.section-heading{display:block;margin-bottom:25px}.section-heading h2{font-size:27px}.section-heading>span{display:block;margin-top:10px}.projects{grid-template-columns:1fr;gap:38px}.project h3{font-size:21px}.stack-row{grid-template-columns:1fr;gap:7px}.stack-row p{font-size:16px}.about-grid{grid-template-columns:1fr;gap:30px}.large-copy{font-size:32px}.contact-links{gap:20px}.contact-links .text-link{overflow-wrap:anywhere}footer{flex-wrap:wrap}footer>span:nth-child(2){display:none}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
 @media print{.controls,nav,.hero-links,.orbital,.skip{display:none!important}:root{--bg:#fff;--fg:#000;--muted:#333;--line:#ccc;--accent:#9c2c20}.shell{width:100%}.hero h1{font-size:70px}.hero-bottom{padding-bottom:20px}.section{padding:25px 0}.project-art{max-height:120px}.project{break-inside:avoid}a{text-decoration:none}.contact{padding:20px 0}}
+
+/* The same SVG works as a GitHub image and as the website masthead. */
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.hero h1.animated-name{font-size:inherit;line-height:0;margin:24px 0 36px;letter-spacing:normal}
+.animated-name img{width:100%;height:auto;border-radius:8px}.animated-name .word-dark{display:none}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]) .animated-name .word-light{display:none}:root:not([data-theme="light"]) .animated-name .word-dark{display:block}}
+:root[data-theme="dark"] .animated-name .word-light{display:none}:root[data-theme="dark"] .animated-name .word-dark{display:block}
+.project-featured{grid-column:1/-1;display:grid;grid-template-columns:1.35fr 1fr;gap:32px;padding-bottom:32px;border-bottom:1px solid var(--line)}
+.project-featured .project-art{aspect-ratio:auto;align-self:start}.project-featured .project-art img{height:auto;width:100%}.featured-copy{align-self:center}.featured-copy .project-meta{margin-top:0}
+.project .project-status{font-size:15px;border-left:2px solid var(--accent);padding-left:13px}
+@media(max-width:760px){.project-featured{grid-template-columns:1fr;gap:20px;padding-bottom:25px}.hero h1.animated-name{margin:20px 0 28px}.intro h2{font-size:32px}.hero-bottom{gap:0}}
