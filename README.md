@@ -1,32 +1,19 @@
 # twoonemoon.github.io
 
-Personal portfolio site — Gridin Sam / Гридин Семён.
+Личное портфолио Семёна Гридина: Java/backend, embedded, audio.
 
-**Live:** https://twoonemoon.github.io
+Статический сайт без сборки и внешних зависимостей. `index.html`, `style.css`, `script.js`, локальные SVG в `assets/`.
 
----
+## Локальный просмотр
 
-Java Developer · Embedded Developer · Project Manager  
-Graduated from MIET 2026, Integrated Electronics.  
-Currently at АО «Ангстрем», Moscow.
+```sh
+python -m http.server 8000
+```
 
----
+Открыть `http://localhost:8000`. Языки RU/EN и светлая/тёмная тема переключаются в шапке; предпочтения сохраняются локально. При отключённом JavaScript доступна русская версия со всеми материалами и ссылками.
 
-**Stack:** Java 17/21 · Spring Boot · Hibernate · Kafka · PostgreSQL · C/C++ · Assembler x86/RISC-V · Verilog
+## Публикация
 
-**Built with:** vanilla HTML · CSS · JS · Canvas API  
-No frameworks. No dependencies. One file.
+GitHub Pages: ветка `main`, каталог `/` (сохранить существующие настройки репозитория). Для обновления достаточно коммита и push. Сайт не собирает данные и не использует стороннюю аналитику.
 
-**Features:**
-- Bilingual RU / EN toggle
-- Ambient canvas animation with particles and streaks
-- Custom cursor with inertia
-- Scroll progress bar
-- Navigation dots
-- Interactive skill tabs with ripple effect
-- Timeline layout for experience
-- Glitch effect on name hover
-
----
-
-[@twoonemoon](https://t.me/twoonemoon) · [gridinsams@gmail.com](mailto:gridinsams@gmail.com)
+Проекты описаны по открытым исходникам. Инженерный опыт и образование перенесены из предыдущей версии портфолио. SVG проектов — иллюстрации, а не снимки интерфейсов.
