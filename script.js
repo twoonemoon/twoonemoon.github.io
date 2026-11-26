@@ -11,7 +11,7 @@
     language.textContent = english ? 'RU' : 'EN';
     language.setAttribute('aria-label', english ? 'Переключить на русский' : 'Switch to English');
     theme.setAttribute('aria-label', english ? 'Switch colour theme' : 'Сменить тему');
-    document.title = english ? 'Semyon Gridin — Java & Embedded | twoonemoon' : 'Семён Гридин — Java & Embedded | twoonemoon';
+    document.title = english ? 'Semyon Gridin — Embedded developer | twoonemoon' : 'Семён Гридин — Embedded-разработчик | twoonemoon';
     remember('portfolio-language', root.lang);
   }
   try {
